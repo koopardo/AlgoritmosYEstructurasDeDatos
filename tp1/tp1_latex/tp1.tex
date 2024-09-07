@@ -1,0 +1,257 @@
+\documentclass[10pt,a4paper]{article}
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\input{AEDmacros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+\usepackage{amsmath}
+\usepackage{colonequals}
+\usepackage{amsfonts}
+\newcommand*{\defeq}{\mathrel{\vcenter{\baselineskip0.5ex \lineskiplimit0pt
+                     \hbox{\scriptsize.}\hbox{\scriptsize.}}}%
+                     =}
+
+\titulo{Especificación y wp}
+\subtitulo{En búsqueda del camino}
+
+\fecha{\today}
+
+\materia{Algoritmos y estructuras de datos}
+\grupo{Grupo datapath}
+
+\integrante{Andreone, Joaquin}{122/24}{jandreone06@gmail.com}
+\integrante{Comerci, Lucas}{818/24}{lukicomerci@gmail.com}
+\integrante{Luis, Theo}{130/23}{theoluis44@gmail.com}
+\integrante{Zea, Marcos}{405/09}{zea.marcos@gmail.com}
+% Pongan cuantos integrantes quieran
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+\begin{document}
+
+\maketitle
+
+\section{Especificaciones}
+
+\begin{proc}{grandesCiudades}{\In ciudades : \TLista{Ciudad}}{\TLista{Ciudad}}
+
+	\requiere{sinRepetidos(ciudades)}
+
+    \asegura{\abs{res} \leq \abs{ciudades} \land sinRepetidos(res)}
+
+	\asegura{\paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{ciudades}\yLuego ciudades[i]_1 \geq 50000 
+    \implicaLuego ciudades[i] \in res}}
+	
+\end{proc}
+
+\begin{proc}{sumaDeHabitantes}{\In menoresDeCiudades: \TLista{Ciudad}, \In mayoresDeCiudades: 
+    \TLista{Ciudad}}{\TLista{Ciudad}}
+
+    \requiere{sinRepetidos(menoresDeCiudades), sinRepetidos(mayoresDeCiudades), \\ 
+    mismasCiudades(menoresDeCiudades,mayoresDeCiudades)}
+    
+    \asegura{\abs{res} = \abs{menoresDeCiudades}}
+
+    \asegura{\paraTodo[unalinea]{i,j}{\ent}{(0 \leq i < \abs{menoresDeCiudades} 
+    \land 0 \leq j < \abs{mayoresDeCiudades}) \yLuego \\ menoresDeCiudades[i]_0 = mayoresDeCiudades[j]_0 
+    \implicaLuego \existe[unalinea]{k}{\ent}{0 \leq k < \abs{res} \land  \\ ( res[k]_0 = menoresDeCiudades[k]_0 
+    \land res[k]_1 = menoresDeCiudades[i]_1 + mayoresDeCiudades[j]_1)}}}
+    
+\end{proc}
+
+%\begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde: \ent, \In hasta: \ent}{\bool}
+%
+%	\requiere{0 \leq desde < \abs{distancias} \land 0 \leq hasta < \abs{distancias} \land esSimetrica(distancias)}
+%
+%	\asegura{res = \True \Iff (hayCaminoDirecto(distancias, desde, hasta) \lor \\ 
+%    hayCaminoIndirecto(distancias,desde,hasta))}
+%
+%\end{proc}
+
+\begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde: \ent, \In hasta: \ent}{\bool}
+
+	\requiere{0 \leq desde,hasta < \abs{distancias}\land esSimetrica(distancias) \land tieneDiagonalNula(distancias)}
+
+	\asegura{res = \True \Iff \existe[unalinea]{camino}{\TLista{\ent}}{esCamino(distancias,desde,hasta,camino)}}
+
+\end{proc}
+
+
+\begin{proc}{cantidadCaminosNSaltos}{\Inout conexion : \TLista{\TLista{\ent}}, \In n: \ent}{}
+    \requiere{esMatrizDeConexion(conexion) \land n \geq 1 \land conexion = Conexion_0}
+
+	\asegura{mismasDimensiones(conexion,Conexion_0)}
+
+    \asegura{\existe[unalinea]{potenciasDeConexion}{\TLista{\TLista{\TLista{\ent}}}}{\abs{potenciasDeConexion} = n 
+    \land \\ potenciasDeConexion[0] = Conexion_0 \land todasMismasDimensiones(potenciasDeConexion,Conexion_0) \land \\ 
+    sonTodasPotenciasDe(potenciasDeConexion,Conexion_0)\land conexion = potenciasDeConexion[n-1]}}
+
+\end{proc}
+
+\begin{proc}{caminoMinimo}{\In origen : \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
+    \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)}
+
+    \asegura{esCamino(distancias,origen,destino,res) \lor res = \TLista{}} 
+    \asegura{\paraTodo[unalinea]{camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) 
+    \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)}}
+
+\end{proc}
+
+
+\subsection{Predicados y funciones auxiliares globales}
+
+\pred{sinRepetidos}{lista: \TLista{Ciudad}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{lista} \implicaLuego \paraTodo[unalinea]{j}{\ent}{
+    0 \leq j < \abs{lista} \land Ciudad[i] = Ciudad[j] \implicaLuego j = i}}
+}
+
+\pred{esSimetrica}{matriz:\TLista{\TLista{\ent}}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{matriz} \implicaLuego \abs{matriz[i]} = \abs{matriz}} \land 
+    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \yLuego matriz[i][j] = matriz[j][i]}
+}
+
+\pred{tieneDiagonalNula}{matriz: \TLista{\TLista{}}}{
+    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \land i = j \implicaLuego matriz[i][j] = 0}
+}
+
+\pred{mismasCiudades}{\In ciudades: \TLista{Ciudad}, \In otrasCiudades: \TLista{Ciudad}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{ciudades} \implicaLuego \existe[unalinea]{j}{\ent}{
+    0 \leq j < \abs{otrasCiudades} \yLuego ciudades[i]_0 = otrasCiudades[j]_0}}
+}
+
+\pred{esCamino}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent, camino: \TLista{\ent}}{
+    desde \in camino \land hasta \in camino \land desde \neq hasta \land \paraTodo[unalinea]{i}{\ent}{
+    0 \leq i < \abs{camino} \implicaLuego 0 \leq camino[i] < \abs{distancias}} \land \\
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{camino}-1 \implicaLuego 
+    distancias[camino[i]][camino[i+1]] \neq 0}
+}
+
+\pred{esMatrizDeConexion}{matriz: \TLista{\TLista{\ent}}}{
+    esSimetrica(matriz) \land tieneDiagonalNula(matriz) \land 
+    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \land i \neq j \implicaLuego \\
+    (matriz[i][j] = 1 \lor matriz[i][j] = 0)}
+}
+
+%\pred{hayCaminoDirecto}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent}{
+%    distancias[desde][hasta] \neq 0
+%}
+
+%\pred{hayCaminoIndirecto}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent}{
+%    \existe[unalinea]{camino}{\TLista{\ent \times \ent}}{desdeHastaEstanEnCamino(distancias,camino,desde,hasta) \land \\
+%    soloCiudadesConectadas(distancias,camino) \land unSoloSentido(distancias,camino)}
+%}
+
+%\pred{desdeHastaEstanEnCamino}{distancias: \TLista{\TLista{\ent}}, camino:\TLista{\ent \times \ent}, desde: \ent, 
+%hasta: \ent}{
+%    \existe[unalinea]{i,j}{\ent}{(0 \leq i,j < \abs{distancias}) \yLuego ((desde,i) \in camino 
+%    \land  (j,hasta) \in camino)}
+%}
+
+%\pred{soloCiudadesConectadas}{distancias: \TLista{\TLista{\ent}}, camino: \TLista{\ent \times \ent}}{
+%    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{distancias} \land j \neq hasta \land (i,j)\in camino \implicaLuego 
+%    (distancias[i][j] = 1 \land \\ \existe[unalinea]{k}{\ent}{0 \leq k < \abs{distancias} \land (j,k) \in camino})}
+%}
+
+%\pred{unSoloSentido}{distancias: \TLista{\TLista{\ent}}, camino: \TLista{\ent}}{
+%    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{distancias} \yLuego (i,j) \in camino 
+%    \implicaLuego (j,i) \notin camino}
+%}
+
+%%%%%%%%cambios%%%%%%
+
+\pred{esProductoDe}{matrizA: \TLista{\TLista{\ent}}, matrizB: \TLista{\TLista{\ent}}, matriz: \TLista{\TLista{\ent}}}{
+    mismasDimensiones(matrizA,matrizB) \land mismasDimensiones(matrizA,matriz) \land \\ 
+    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \implicaLuego 
+    matriz[i][j] = \sum_{k=0}^{\abs{A}-1}matrizA[i][k] \cdot matrizB[k][j]}
+}
+
+\pred{mismasDimensiones}{matrizA: \TLista{\TLista{\ent}}, matrizB: \TLista{\TLista{\ent}}}{
+    \abs{matrizA} = \abs{matrizB} \land \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{matrizA} 
+    \implicaLuego \abs{matrizA[i]} = \abs{matrizB[i]}}
+}
+
+\pred{todasMismasDimensiones}{matrices: \TLista{\TLista{\TLista{\ent}}}, matriz: \TLista{\TLista{\ent}}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{matrices} \implicaLuego mismasDimensiones(matrices[i],matriz)}
+}
+
+\pred{sonTodasPotenciasDe}{matrices: \TLista{\TLista{\TLista{\ent}}}, matriz: \TLista{\TLista{\ent}}}{
+    \paraTodo[unalinea]{i}{\ent}{1 \leq i < \abs{matrices} \implica esProductoDe(matriz,matrices[i-1],matrices[i])}
+}
+
+\aux{longitudDeCamino}{camino: \TLista{\ent}, distancias: \TLista{\TLista{\ent}}}{\ent}{ \\
+\displaystyle \sum_{i = 0}^{\abs{camino}-2} distancias[camino[i]][camino[i+1]]
+}
+
+\section{Demostraciones de correctitud}
+
+\begin{lstlisting}[mathescape=true][caption={}label=code:for]
+S1: res $\colonequals$ 0;
+S2: i $\colonequals$ 0;
+S3: while (i < ciudades.length) do
+S4:     res $\colonequals$ res + ciudades[i].habitantes 
+S5:     i = i + 1
+    endwhile
+\end{lstlisting}
+
+Como vemos en la implementacion de la especificacion el programa consta solo de un ciclo while, por lo que para 
+demostrar su correctitud debemos usar el "Teorema del Invariante" y el "Teorema de terminacion de un ciclo". Tienen que 
+cumplir estas condiciones:
+
+\begin{enumerate}
+    \item $P_c \Longrightarrow I $
+    \item $\{I \wedge B \} S \{I\} $
+    \item $I \wedge \neg B \Longrightarrow Q_c $
+    \item $\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \} $
+    \item $I \wedge fv \leq 0 \Longrightarrow \neg B $
+\end{enumerate}
+
+Basado en la especificacion y la implementacion propongo:
+\begin{itemize}
+    \item $P_c \equiv \{ res = 0 \wedge i = 0 \}$
+    \item $B \equiv \{ i < |ciudades| \}$
+    \item $S_1 \equiv \{ res := res + ciudades[i]_1 \}$
+    \item $S_2 \equiv \{ i := i + 1 \}$
+    \item $Q_c \equiv \{ res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \}$ 
+    \item $I \equiv \{ 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \}$
+    \item $ fv = |ciudades| - i$
+\end{itemize}
+
+\subsection{$P_c \Longrightarrow I $}
+Reemplazo:
+$$ res = 0 \wedge i = 0 \Longrightarrow 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 $$
+$$ 0 \leq i \leq |ciudades| \equiv 0 \leq 0 \leq |ciudades| \equiv True$$ 
+$$ res = \sum_{j=0}^{i-1}ciudades[j]_1 \equiv 0 = \sum_{j=0}^{0-1}ciudades[j]_1 = 0 \equiv True $$
+Por lo tanto se cumple $P_c \Longrightarrow I $
+
+\subsection{$\{I \wedge B \} S \{I\} $}
+Para que la tripla de Hoare sea valida, la precondicion debe implicar la "Weakest precondition" del codigo y la 
+postcondicion. Es decir:
+$$ \{I \wedge B \} S \{I\} \Longleftrightarrow \{I \wedge B \} \Longrightarrow_L wp(S, I) $$
+\begin{align*}
+    wp(S, I) &\equiv wp(S_1, wp(S_2, I)) \equiv wp(S_1, wp(i := i + 1, 0 \leq i \leq |ciudades| \wedge 
+    res = \sum_{j=0}^{i-1}ciudades[j]_1)) \\
+    &\equiv wp(S_1, def(i+1) \wedge_L 0 \leq i+1 \leq |ciudades| \wedge res = \sum_{j=0}^{i+1-1}ciudades[j]_1) \\
+    &\equiv wp(res := res + ciudades[i]_1, 0 \leq i+1 \leq |ciudades| \wedge res = \sum_{j=0}^{i}ciudades[j]_1) \\ 
+    &\equiv def(res) \wedge_L def(ciudades[i]_1) \wedge 0 \leq i+1 \leq |ciudades| \wedge 
+    res + ciudades[i]_1 = \sum_{j=0}^{i}ciudades[j]_1 \\
+    &\equiv 0 \leq i < |ciudades| \wedge_L 0 \leq i+1 \leq |ciudades| \wedge 
+    res + ciudades[i]_1 = \sum_{j=0}^{i}ciudades[j]_1
+\end{align*}
+
+Combino los intervalos de $i$ y resto en ambas partes de la igualdad $ciudades[i]_1$ para transformar el rango de la 
+sumatoria
+
+$$ \equiv 0 \leq i < |ciudades| \wedge_L res = \sum_{j=0}^{i-1}ciudades[j]_1 $$
+
+Como vemos $I \wedge B \equiv wp(S,I)$, por tanto $\{I \wedge B \} \Longrightarrow wp(S,I) $ que era lo que 
+necesitabamos para probar que la tripla de Hoare sea valida.
+
+\subsection{$I \wedge \neg B \Longrightarrow Q_c $}
+Reemplazo:
+$$ I \wedge \neg B \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge i \geq |ciudades|$$
+Si $i \geq |ciudades| \wedge i \leq |ciudades|$ entonces $i = |ciudades|$
+$$ i = |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \Longrightarrow 
+res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \equiv Q_c $$
+Y esto se cumple ya que al por especificacion al menos una de ellas es grande, es decir, supera los 50.000 habitantes.
+
+\end{document}
