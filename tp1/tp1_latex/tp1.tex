@@ -59,15 +59,6 @@
     
 \end{proc}
 
-%\begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde: \ent, \In hasta: \ent}{\bool}
-%
-%	\requiere{0 \leq desde < \abs{distancias} \land 0 \leq hasta < \abs{distancias} \land esSimetrica(distancias)}
-%
-%	\asegura{res = \True \Iff (hayCaminoDirecto(distancias, desde, hasta) \lor \\ 
-%    hayCaminoIndirecto(distancias,desde,hasta))}
-%
-%\end{proc}
-
 \begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde: \ent, \In hasta: \ent}{\bool}
 
 	\requiere{0 \leq desde,hasta < \abs{distancias}\land esSimetrica(distancias) \land tieneDiagonalNula(distancias)}
@@ -75,7 +66,6 @@
 	\asegura{res = \True \Iff \existe[unalinea]{camino}{\TLista{\ent}}{esCamino(distancias,desde,hasta,camino)}}
 
 \end{proc}
-
 
 \begin{proc}{cantidadCaminosNSaltos}{\Inout conexion : \TLista{\TLista{\ent}}, \In n: \ent}{}
     \requiere{esMatrizDeConexion(conexion) \land n \geq 1 \land conexion = Conexion_0}
@@ -96,7 +86,6 @@
     \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)}}
 
 \end{proc}
-
 
 \subsection{Predicados y funciones auxiliares globales}
 
@@ -132,33 +121,6 @@
     (matriz[i][j] = 1 \lor matriz[i][j] = 0)}
 }
 
-%\pred{hayCaminoDirecto}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent}{
-%    distancias[desde][hasta] \neq 0
-%}
-
-%\pred{hayCaminoIndirecto}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent}{
-%    \existe[unalinea]{camino}{\TLista{\ent \times \ent}}{desdeHastaEstanEnCamino(distancias,camino,desde,hasta) \land \\
-%    soloCiudadesConectadas(distancias,camino) \land unSoloSentido(distancias,camino)}
-%}
-
-%\pred{desdeHastaEstanEnCamino}{distancias: \TLista{\TLista{\ent}}, camino:\TLista{\ent \times \ent}, desde: \ent, 
-%hasta: \ent}{
-%    \existe[unalinea]{i,j}{\ent}{(0 \leq i,j < \abs{distancias}) \yLuego ((desde,i) \in camino 
-%    \land  (j,hasta) \in camino)}
-%}
-
-%\pred{soloCiudadesConectadas}{distancias: \TLista{\TLista{\ent}}, camino: \TLista{\ent \times \ent}}{
-%    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{distancias} \land j \neq hasta \land (i,j)\in camino \implicaLuego 
-%    (distancias[i][j] = 1 \land \\ \existe[unalinea]{k}{\ent}{0 \leq k < \abs{distancias} \land (j,k) \in camino})}
-%}
-
-%\pred{unSoloSentido}{distancias: \TLista{\TLista{\ent}}, camino: \TLista{\ent}}{
-%    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{distancias} \yLuego (i,j) \in camino 
-%    \implicaLuego (j,i) \notin camino}
-%}
-
-%%%%%%%%cambios%%%%%%
-
 \pred{esProductoDe}{matrizA: \TLista{\TLista{\ent}}, matrizB: \TLista{\TLista{\ent}}, matriz: \TLista{\TLista{\ent}}}{
     mismasDimensiones(matrizA,matrizB) \land mismasDimensiones(matrizA,matriz) \land \\ 
     \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \implicaLuego 
@@ -193,9 +155,9 @@ S5:     i = i + 1
     endwhile
 \end{lstlisting}
 
-Como vemos en la implementacion de la especificacion el programa consta solo de un ciclo while, por lo que para 
-demostrar su correctitud debemos usar el "Teorema del Invariante" y el "Teorema de terminacion de un ciclo". Tienen que 
-cumplir estas condiciones:
+Como se ve en la implementacion de la especificacion, el programa consta solo de un ciclo while, por lo que para 
+demostrar su correctitud debemos usar el ``Teorema del Invariante'' y el ``Teorema de terminación de un ciclo". Se 
+tienen que cumplir estas condiciones:
 
 \begin{enumerate}
     \item $P_c \Longrightarrow I $
@@ -221,11 +183,11 @@ Reemplazo:
 $$ res = 0 \wedge i = 0 \Longrightarrow 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 $$
 $$ 0 \leq i \leq |ciudades| \equiv 0 \leq 0 \leq |ciudades| \equiv True$$ 
 $$ res = \sum_{j=0}^{i-1}ciudades[j]_1 \equiv 0 = \sum_{j=0}^{0-1}ciudades[j]_1 = 0 \equiv True $$
-Por lo tanto se cumple $P_c \Longrightarrow I $
+Por lo tanto, se cumple $P_c \Longrightarrow I $
 
 \subsection{$\{I \wedge B \} S \{I\} $}
-Para que la tripla de Hoare sea valida, la precondicion debe implicar la "Weakest precondition" del codigo y la 
-postcondicion. Es decir:
+Para que la tripla de Hoare sea valida, la precondición debe implicar la ``Weakest precondition" del código y la 
+postcondición. Es decir:
 $$ \{I \wedge B \} S \{I\} \Longleftrightarrow \{I \wedge B \} \Longrightarrow_L wp(S, I) $$
 \begin{align*}
     wp(S, I) &\equiv wp(S_1, wp(S_2, I)) \equiv wp(S_1, wp(i := i + 1, 0 \leq i \leq |ciudades| \wedge 
@@ -243,8 +205,8 @@ sumatoria
 
 $$ \equiv 0 \leq i < |ciudades| \wedge_L res = \sum_{j=0}^{i-1}ciudades[j]_1 $$
 
-Como vemos $I \wedge B \equiv wp(S,I)$, por tanto $\{I \wedge B \} \Longrightarrow wp(S,I) $ que era lo que 
-necesitabamos para probar que la tripla de Hoare sea valida.
+Como $I \wedge B \equiv wp(S,I)$, por lo tanto $\{I \wedge B \} \Longrightarrow wp(S,I) $ que era lo que 
+necesitaba para probar que la tripla de Hoare sea válida.
 
 \subsection{$I \wedge \neg B \Longrightarrow Q_c $}
 Reemplazo:
@@ -252,6 +214,44 @@ $$ I \wedge \neg B \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}
 Si $i \geq |ciudades| \wedge i \leq |ciudades|$ entonces $i = |ciudades|$
 $$ i = |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \Longrightarrow 
 res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \equiv Q_c $$
-Y esto se cumple ya que al por especificacion al menos una de ellas es grande, es decir, supera los 50.000 habitantes.
+Esto se cumple, ya que por especificación al menos una de ellas es grande, es decir, supera los 50.000 habitantes.
+
+\subsection{$\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \}$}
+Para que la tripla de Hoare sea válida, la precondición debe implicar la ``Weakest precondition" del programa y la 
+postcondicion. Es decir:
+$$\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \} \Longleftrightarrow \{I \wedge B \wedge v_0 = fv \} 
+\Longrightarrow wp(S, fv < v_0)$$
+
+Calculo wp:
+\begin{align*}
+    wp(S, fv < v_0) &\equiv wp(S_1, wp(S_2, fv < v_0)) \equiv wp(S_1, wp(i := i + 1, |ciudades| - i < v_0)) \\
+    &\equiv wp(res := res + ciudades[i]_1, def(i+1) \wedge_L |ciudades| - (i+1) < v_0)  \\
+    &\equiv def(ciudades[i]) \wedge_L |ciudades| - i - 1 < v_0 \\
+    &\equiv 0 \leq i < |ciudades| \wedge_L |ciudades| - i - 1 < v_0
+\end{align*}
+Y desarrollo la precondición:
+
+$$\{I \wedge B \wedge v_0 = fv \} \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge 
+i < |ciudades| \wedge |ciudades| - i = v_0 $$
+Ignoro lo que corresponde a $res$ porque no lo necesito para la demostracion, y combino los rangos de i:
+$$ 0 \leq i < |ciudades| \wedge |ciudades| - i = v_0 $$
+Entonces:
+$$\{I \wedge B \wedge v_0 = fv \} \Longrightarrow wp(S, fv < v_0) \Longleftrightarrow $$
+$$ 0 \leq i < |ciudades| \wedge |ciudades| - i = v_0 \Longrightarrow 0 \leq i < |ciudades| \wedge_L 
+|ciudades| - i - 1 < v_0 \Longleftrightarrow$$
+$$ |ciudades| - i - 1 < |ciudades| - i \Longleftrightarrow -1 < 0 \equiv True $$
+
+Por lo tanto, la tripla de Hoare es válida.
+
+\subsection{$I \wedge fv \leq 0 \Longrightarrow \neg B $}
+
+Desarrollo:
+$$ I \wedge fv \leq 0 \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge 
+|ciudades| - i \leq 0 \Longrightarrow \neg B$$
+Ignoro lo que corresponde a $res$ porque no lo necesito para la demostración:
+
+$$0 \leq i \leq |ciudades| \wedge |ciudades| - i \leq 0 \Longrightarrow i \geq |ciudades| \equiv$$
+$$0 \leq i \leq |ciudades| \wedge |ciudades| \leq i \Longrightarrow i \geq |ciudades| \equiv$$
+$$ i = |ciudades| \Longrightarrow i \geq |ciudades| \equiv True$$
 
 \end{document}
