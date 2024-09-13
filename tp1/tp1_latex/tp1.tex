@@ -169,12 +169,12 @@ tienen que cumplir estas condiciones:
 
 Basado en la especificacion y la implementacion propongo:
 \begin{itemize}
-    \item $P_c \equiv \{ res = 0 \wedge i = 0 \}$
-    \item $B \equiv \{ i < |ciudades| \}$
-    \item $S_1 \equiv \{ res := res + ciudades[i]_1 \}$
-    \item $S_2 \equiv \{ i := i + 1 \}$
-    \item $Q_c \equiv \{ res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \}$ 
-    \item $I \equiv \{ 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \}$
+    \item $P_c \equiv res = 0 \wedge i = 0 $
+    \item $B \equiv i < |ciudades| $
+    \item $S_1 \equiv res := res + ciudades[i]_1 $
+    \item $S_2 \equiv i := i + 1 $
+    \item $Q_c \equiv res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 $ 
+    \item $I \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 $
     \item $ fv = |ciudades| - i$
 \end{itemize}
 
