@@ -35,7 +35,7 @@
 
 \begin{proc}{grandesCiudades}{\In ciudades : \TLista{Ciudad}}{\TLista{Ciudad}}
 
-	\requiere{sinRepetidos(ciudades)}
+	\requiere{sinRepetidos(ciudades) \land cantidadHabitantesValida(ciudades)}
 
     \asegura{\abs{res} \leq \abs{ciudades} \land sinRepetidos(res)}
 
@@ -47,15 +47,15 @@
 \begin{proc}{sumaDeHabitantes}{\In menoresDeCiudades: \TLista{Ciudad}, \In mayoresDeCiudades: 
     \TLista{Ciudad}}{\TLista{Ciudad}}
 
-    \requiere{sinRepetidos(menoresDeCiudades), sinRepetidos(mayoresDeCiudades), \\ 
-    mismasCiudades(menoresDeCiudades,mayoresDeCiudades)}
+    \requiere{sinRepetidos(menoresDeCiudades) \land sinRepetidos(mayoresDeCiudades) \land \\ 
+    mismasCiudades(menoresDeCiudades,mayoresDeCiudades) \land \\ 
+    cantidadHabitantesValida(menoresDeCiudades) \land cantidadHabitantesValida(mayoresDeCiudades)}
     
     \asegura{\abs{res} = \abs{menoresDeCiudades}}
 
-    \asegura{\paraTodo[unalinea]{i,j}{\ent}{(0 \leq i < \abs{menoresDeCiudades} 
-    \land 0 \leq j < \abs{mayoresDeCiudades}) \yLuego \\ menoresDeCiudades[i]_0 = mayoresDeCiudades[j]_0 
-    \implicaLuego \existe[unalinea]{k}{\ent}{0 \leq k < \abs{res} \land  \\ ( res[k]_0 = menoresDeCiudades[k]_0 
-    \land res[k]_1 = menoresDeCiudades[i]_1 + mayoresDeCiudades[j]_1)}}}
+    \asegura{\paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{menoresDeCiudades} \yLuego \\ 
+    menoresDeCiudades[i]_0 = mayoresDeCiudades[j]_0 \implicaLuego \existe[unalinea]{k}{\ent}{0 \leq k < \abs{res} 
+    \land  \\ ( res[k]_0 = menoresDeCiudades[k]_0 \land res[k]_1 = menoresDeCiudades[i]_1 + mayoresDeCiudades[j]_1)}}}
     
 \end{proc}
 
@@ -92,6 +92,10 @@
 \pred{sinRepetidos}{lista: \TLista{Ciudad}}{
     \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{lista} \implicaLuego \paraTodo[unalinea]{j}{\ent}{
     0 \leq j < \abs{lista} \land Ciudad[i] = Ciudad[j] \implicaLuego j = i}}
+}
+
+\pred{cantidadHabitantesValida}{\In ciudades: \TLista{Ciudad}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{ciudades} \implicaLuego ciudades[i]_1 \geq 0}
 }
 
 \pred{esSimetrica}{matriz:\TLista{\TLista{\ent}}}{
@@ -149,9 +153,9 @@
 \begin{lstlisting}[mathescape=true][caption={}label=code:for]
 S1: res $\colonequals$ 0;
 S2: i $\colonequals$ 0;
-S3: while (i < ciudades.length) do
-S4:     res $\colonequals$ res + ciudades[i].habitantes 
-S5:     i = i + 1
+    while (i < ciudades.length) do
+S3:     res $\colonequals$ res + ciudades[i].habitantes 
+S4:     i = i + 1
     endwhile
 \end{lstlisting}
 
@@ -253,5 +257,11 @@ Ignoro lo que corresponde a $res$ porque no lo necesito para la demostración:
 $$0 \leq i \leq |ciudades| \wedge |ciudades| - i \leq 0 \Longrightarrow i \geq |ciudades| \equiv$$
 $$0 \leq i \leq |ciudades| \wedge |ciudades| \leq i \Longrightarrow i \geq |ciudades| \equiv$$
 $$ i = |ciudades| \Longrightarrow i \geq |ciudades| \equiv True$$
+
+\subsection{$Q_c \Longrightarrow Q $}
+Reemplazo:
+$$res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \Longrightarrow 
+res = \sum_{i=0}^{|ciudades|-1}ciudades[i]_1$$
+Completamente trivial, se cumple.
 
 \end{document}
