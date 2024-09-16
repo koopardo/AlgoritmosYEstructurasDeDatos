@@ -149,7 +149,7 @@
 }
 
 \section{Demostraciones de correctitud}
-
+\subsection*{La implementación es correcta con respecto a la especificación}
 \begin{lstlisting}[mathescape=true][caption={}label=code:for]
 S1: res $\colonequals$ 0;
 S2: i $\colonequals$ 0;
@@ -159,28 +159,45 @@ S4:     i = i + 1
     endwhile
 \end{lstlisting}
 
-Como se ve en la implementacion de la especificacion, el programa consta solo de un ciclo while, por lo que para 
-demostrar su correctitud debemos usar el ``Teorema del Invariante'' y el ``Teorema de terminación de un ciclo". Se 
+Como se ve en la implementacion de la especificacion, el programa consta solo de un ciclo while. Se 
 tienen que cumplir estas condiciones:
 
 \begin{enumerate}
-    \item $P_c \Longrightarrow I $
-    \item $\{I \wedge B \} S \{I\} $
-    \item $I \wedge \neg B \Longrightarrow Q_c $
-    \item $\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \} $
-    \item $I \wedge fv \leq 0 \Longrightarrow \neg B $
+    \item $P \Longrightarrow wp(S1;S2;P_c) $
+    \item $\{P_c \} \textbf{while $B$ do $S_c$ endwhile} \{Q_c\} $
+    \item $Q_c \Longrightarrow Q $
+\end{enumerate}
+donde $S_c = S3;S4$. Para demostar el punto 2, debemos usar el ``Teorema del Invariante'' y el ``Teorema de terminación de un ciclo". Ambos 
+se cumplen bajo estas condiciones:
+\begin{enumerate}
+    \item[2.1] $P_c \Longrightarrow I $
+    \item[2.2] $\{I \wedge B \} S_c \{I\} $
+    \item[2.3] $I \wedge \neg B \Longrightarrow Q_c $
+    \item[2.4] $\{I \wedge B \wedge v_0 = fv \} S_c \{ fv < v_0 \} $
+    \item[2.5] $I \wedge fv \leq 0 \Longrightarrow \neg B $
 \end{enumerate}
 
 Basado en la especificacion y la implementacion propongo:
 \begin{itemize}
     \item $P_c \equiv res = 0 \wedge i = 0 $
     \item $B \equiv i < |ciudades| $
-    \item $S_1 \equiv res := res + ciudades[i]_1 $
-    \item $S_2 \equiv i := i + 1 $
-    \item $Q_c \equiv res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 $ 
+    \item $S_3 \equiv res := res + ciudades[i]_1 $
+    \item $S_4 \equiv i := i + 1 $
+    \item $Q_c \equiv res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 $ 
     \item $I \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 $
     \item $ fv = |ciudades| - i$
 \end{itemize}
+
+\subsection*{\textbf{1. }$P \Longrightarrow wp(S1;S2;P_c)$}
+Calculo la $wp(S1;S2;P_c)$:
+\begin{align*}
+    wp(S1;S2;P_c) &\equiv wp(S1,wp(s2,P_c)) \equiv wp(S1,wp(i:= 0, res = 0 \land i = 0 )) \equiv wp(S2, res = 0) \\
+    &\equiv wp(res := 0, res = 0) \\
+    wp(S1;S2;P_c) &\equiv True
+\end{align*}
+
+Verifico que $P \Longrightarrow wp(S1;S2;P_c)$, o sea que $P \Longrightarrow True$. Pero esto último es trivial, pues
+es una tautología.
 
 \subsection{$P_c \Longrightarrow I $}
 Reemplazo:
@@ -189,14 +206,14 @@ $$ 0 \leq i \leq |ciudades| \equiv 0 \leq 0 \leq |ciudades| \equiv True$$
 $$ res = \sum_{j=0}^{i-1}ciudades[j]_1 \equiv 0 = \sum_{j=0}^{0-1}ciudades[j]_1 = 0 \equiv True $$
 Por lo tanto, se cumple $P_c \Longrightarrow I $
 
-\subsection{$\{I \wedge B \} S \{I\} $}
+\subsection{$\{I \wedge B \} S_c \{I\} $}
 Para que la tripla de Hoare sea valida, la precondición debe implicar la ``Weakest precondition" del código y la 
 postcondición. Es decir:
-$$ \{I \wedge B \} S \{I\} \Longleftrightarrow \{I \wedge B \} \Longrightarrow_L wp(S, I) $$
+$$ \{I \wedge B \} S_c \{I\} \Longleftrightarrow ((I \wedge B) \Longrightarrow_L wp(S_c, I))$$
 \begin{align*}
-    wp(S, I) &\equiv wp(S_1, wp(S_2, I)) \equiv wp(S_1, wp(i := i + 1, 0 \leq i \leq |ciudades| \wedge 
+    wp(S_c, I) &\equiv wp(S_3, wp(S_4, I)) \equiv wp(S_3, wp(i := i + 1, 0 \leq i \leq |ciudades| \wedge 
     res = \sum_{j=0}^{i-1}ciudades[j]_1)) \\
-    &\equiv wp(S_1, def(i+1) \wedge_L 0 \leq i+1 \leq |ciudades| \wedge res = \sum_{j=0}^{i+1-1}ciudades[j]_1) \\
+    &\equiv wp(S_3, def(i+1) \wedge_L 0 \leq i+1 \leq |ciudades| \wedge res = \sum_{j=0}^{i+1-1}ciudades[j]_1) \\
     &\equiv wp(res := res + ciudades[i]_1, 0 \leq i+1 \leq |ciudades| \wedge res = \sum_{j=0}^{i}ciudades[j]_1) \\ 
     &\equiv def(res) \wedge_L def(ciudades[i]_1) \wedge 0 \leq i+1 \leq |ciudades| \wedge 
     res + ciudades[i]_1 = \sum_{j=0}^{i}ciudades[j]_1 \\
@@ -209,7 +226,7 @@ sumatoria
 
 $$ \equiv 0 \leq i < |ciudades| \wedge_L res = \sum_{j=0}^{i-1}ciudades[j]_1 $$
 
-Como $I \wedge B \equiv wp(S,I)$, por lo tanto $\{I \wedge B \} \Longrightarrow wp(S,I) $ que era lo que 
+Como $I \wedge B \equiv wp(S_c,I)$, por lo tanto $(I \wedge B) \Longrightarrow wp(S_c,I) $ que era lo que 
 necesitaba para probar que la tripla de Hoare sea válida.
 
 \subsection{$I \wedge \neg B \Longrightarrow Q_c $}
@@ -217,30 +234,29 @@ Reemplazo:
 $$ I \wedge \neg B \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge i \geq |ciudades|$$
 Si $i \geq |ciudades| \wedge i \leq |ciudades|$ entonces $i = |ciudades|$
 $$ i = |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \Longrightarrow 
-res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \equiv Q_c $$
-Esto se cumple, ya que por especificación al menos una de ellas es grande, es decir, supera los 50.000 habitantes.
+res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \equiv Q_c $$
 
-\subsection{$\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \}$}
+\subsection{$\{I \wedge B \wedge v_0 = fv \} S_c \{ fv < v_0 \}$}
 Para que la tripla de Hoare sea válida, la precondición debe implicar la ``Weakest precondition" del programa y la 
 postcondicion. Es decir:
-$$\{I \wedge B \wedge v_0 = fv \} S \{ fv < v_0 \} \Longleftrightarrow \{I \wedge B \wedge v_0 = fv \} 
-\Longrightarrow wp(S, fv < v_0)$$
+$$\{I \wedge B \wedge v_0 = fv \} S_c \{ fv < v_0 \} \Longleftrightarrow ((I \wedge B \wedge v_0 = fv) 
+\Longrightarrow wp(S_c, fv < v_0))$$
 
 Calculo wp:
 \begin{align*}
-    wp(S, fv < v_0) &\equiv wp(S_1, wp(S_2, fv < v_0)) \equiv wp(S_1, wp(i := i + 1, |ciudades| - i < v_0)) \\
+    wp(S_c, fv < v_0) &\equiv wp(S_3, wp(S_4, fv < v_0)) \equiv wp(S_3, wp(i := i + 1, |ciudades| - i < v_0)) \\
     &\equiv wp(res := res + ciudades[i]_1, def(i+1) \wedge_L |ciudades| - (i+1) < v_0)  \\
     &\equiv def(ciudades[i]) \wedge_L |ciudades| - i - 1 < v_0 \\
     &\equiv 0 \leq i < |ciudades| \wedge_L |ciudades| - i - 1 < v_0
 \end{align*}
 Y desarrollo la precondición:
 
-$$\{I \wedge B \wedge v_0 = fv \} \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge 
+$$ I \wedge B \wedge v_0 = fv \equiv 0 \leq i \leq |ciudades| \wedge res = \sum_{j=0}^{i-1}ciudades[j]_1 \wedge 
 i < |ciudades| \wedge |ciudades| - i = v_0 $$
 Ignoro lo que corresponde a $res$ porque no lo necesito para la demostración, y combino los rangos de i:
 $$ 0 \leq i < |ciudades| \wedge |ciudades| - i = v_0 $$
 Entonces:
-$$\{I \wedge B \wedge v_0 = fv \} \Longrightarrow wp(S, fv < v_0) \Longleftrightarrow $$
+$$\{I \wedge B \wedge v_0 = fv \} \Longrightarrow wp(S_c, fv < v_0) \Longleftrightarrow $$
 $$ 0 \leq i < |ciudades| \wedge |ciudades| - i = v_0 \Longrightarrow 0 \leq i < |ciudades| \wedge_L 
 |ciudades| - i - 1 < v_0 \Longleftrightarrow$$
 $$ |ciudades| - i - 1 < |ciudades| - i \Longleftrightarrow -1 < 0 \equiv True $$
@@ -258,10 +274,21 @@ $$0 \leq i \leq |ciudades| \wedge |ciudades| - i \leq 0 \Longrightarrow i \geq |
 $$0 \leq i \leq |ciudades| \wedge |ciudades| \leq i \Longrightarrow i \geq |ciudades| \equiv$$
 $$ i = |ciudades| \Longrightarrow i \geq |ciudades| \equiv True$$
 
-\subsection{$Q_c \Longrightarrow Q $}
-Reemplazo:
-$$res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \wedge res > 50000 \Longrightarrow 
-res = \sum_{i=0}^{|ciudades|-1}ciudades[i]_1$$
+\subsection*{\textbf{3. }$Q_c \Longrightarrow Q$}
+\begin{align*}
+    Q_c \equiv res = \sum_{j=0}^{|ciudades|-1}ciudades[j]_1 \Longrightarrow 
+    res = \sum_{i=0}^{|ciudades|-1}ciudades[i]_1 \equiv Q
+\end{align*}
 Completamente trivial, se cumple.
 
+\subsection*{El valor devuelto es mayor a 50.000}
+Sea $ciudades = \TLista{Ciudad}$ tal que cumple el requiere de nuestra especificación. Como cumple con esto último, se
+tiene que existe un $j$, donde $0 \leq j < \abs{ciudades}$, tal que $ciudades[j]_1 > 50000$. Al pasar por el programa
+$S$ (que es valido y termina), se tiene que
+\begin{align*}
+    res &= \sum_{i=0}^{|ciudades|-1}ciudades[i]_1 = ciudades[j]_1 +\sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1
+    > 50000 + \sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1 > 50000 \\
+    res &> 50000
+\end{align*}
+con lo cual, el valor devuelto ($res$) es mayor a 50000.
 \end{document}
