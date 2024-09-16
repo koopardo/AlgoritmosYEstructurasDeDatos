@@ -167,8 +167,8 @@ tienen que cumplir estas condiciones:
     \item $\{P_c \} \textbf{while $B$ do $S_c$ endwhile} \{Q_c\} $
     \item $Q_c \Longrightarrow Q $
 \end{enumerate}
-donde $S_c = S3;S4$. Para demostar el punto 2, debemos usar el ``Teorema del Invariante'' y el ``Teorema de terminación de un ciclo". Ambos 
-se cumplen bajo estas condiciones:
+donde $S_c = S3;S4$. Para demostar el punto 2, debemos usar el ``Teorema del Invariante'' y el 
+``Teorema de terminación de un ciclo". Ambos se cumplen bajo estas condiciones:
 \begin{enumerate}
     \item[2.1] $P_c \Longrightarrow I $
     \item[2.2] $\{I \wedge B \} S_c \{I\} $
@@ -191,7 +191,7 @@ Basado en la especificacion y la implementacion propongo:
 \subsection*{\textbf{1. }$P \Longrightarrow wp(S1;S2;P_c)$}
 Calculo la $wp(S1;S2;P_c)$:
 \begin{align*}
-    wp(S1;S2;P_c) &\equiv wp(S1,wp(s2,P_c)) \equiv wp(S1,wp(i:= 0, res = 0 \land i = 0 )) \equiv wp(S2, res = 0) \\
+    wp(S1;S2;P_c) &\equiv wp(S1,wp(S2,P_c)) \equiv wp(S1,wp(i:= 0, res = 0 \land i = 0 )) \equiv wp(S2, res = 0) \\
     &\equiv wp(res := 0, res = 0) \\
     wp(S1;S2;P_c) &\equiv True
 \end{align*}
@@ -284,11 +284,11 @@ Completamente trivial, se cumple.
 \subsection*{El valor devuelto es mayor a 50.000}
 Sea $ciudades = \TLista{Ciudad}$ tal que cumple el requiere de nuestra especificación. Como cumple con esto último, se
 tiene que existe un $j$, donde $0 \leq j < \abs{ciudades}$, tal que $ciudades[j]_1 > 50000$. Al pasar por el programa
-$S$ (que es valido y termina), se tiene que
+$S$ (que es valido y termina), se tiene que el valor devuelto $res$
 \begin{align*}
     res &= \sum_{i=0}^{|ciudades|-1}ciudades[i]_1 = ciudades[j]_1 +\sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1
     > 50000 + \sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1 > 50000 \\
     res &> 50000
 \end{align*}
-con lo cual, el valor devuelto ($res$) es mayor a 50000.
+con lo cual, el valor devuelto es mayor a 50000.
 \end{document}
