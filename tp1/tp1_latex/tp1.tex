@@ -81,9 +81,9 @@
 \end{proc}
 
 \begin{proc}{caminoMinimo}{\In origen : \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
-    \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)}
+    \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)
+    \land \\ tieneDiagonalNula(distancias)}
 
-    \asegura{esCamino(distancias,origen,destino,res) \lor res = \TLista{}} 
     \asegura{res = <> \lor (esCamino(distancias,origen,destino,res) \land \\ 
     \paraTodo[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) 
     \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)})}
@@ -92,9 +92,9 @@
 
 \subsection{Predicados y funciones auxiliares globales}
 
-\pred{sinRepetidos}{lista: \TLista{Ciudad}}{
-    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{lista} \implicaLuego \paraTodo[unalinea]{j}{\ent}{
-    0 \leq j < \abs{lista} \yLuego lista[i]_0 = lista[j]_0 \implicaLuego j = i}}
+\pred{sinRepetidos}{ciudades: \TLista{Ciudad}}{
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{ciudades} \implicaLuego \paraTodo[unalinea]{j}{\ent}{
+    0 \leq j < \abs{ciudades} \yLuego ciudades[i]_0 = ciudades[j]_0 \implicaLuego j = i}}
 }
 
 \pred{cantidadHabitantesValida}{\In ciudades: \TLista{Ciudad}}{
@@ -284,9 +284,11 @@ $$ i = |ciudades| \Longrightarrow i \geq |ciudades| \equiv True$$
 Completamente trivial, se cumple.
 
 \subsection*{El valor devuelto es mayor a 50.000}
-Sea $ciudades = \TLista{Ciudad}$ tal que cumple el requiere de nuestra especificación. Como cumple con esto último, se
-tiene que existe un $j$, donde $0 \leq j < \abs{ciudades}$, tal que $ciudades[j]_1 > 50000$. Al pasar por el programa
-$S$ (que es valido y termina), se tiene que el valor devuelto $res$
+Como en mi especificación el valor de entrada $ciudades = \TLista{Ciudad}$ es un $in$, esto me asegura que la lista 
+\textit{ciudades} no se modifica durante la demostración, con lo cual hace que $P$ sea valido siempre.
+ 
+Calculo $res$ a partir de la expresión en $Q$. Como mi $P$ es valido, tomo $ciudades = \TLista{Ciudad}$ y tengo que 
+existe un $j$, donde $0 \leq j < \abs{ciudades}$, tal que $ciudades[j]_1 > 50000$. Basta ver que 
 \begin{align*}
     res &= \sum_{i=0}^{|ciudades|-1}ciudades[i]_1 = ciudades[j]_1 +\sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1
     > 50000 + \sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1 > 50000 \\
