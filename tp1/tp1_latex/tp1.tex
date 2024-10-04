@@ -41,6 +41,8 @@
 
 	\asegura{\paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{ciudades}\yLuego ciudades[i]_1 \geq 50000 
     \implicaLuego ciudades[i] \in res}}
+
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{res} \implicaLuego res[i] \in ciudades}}
 	
 \end{proc}
 
@@ -82,8 +84,9 @@
     \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)}
 
     \asegura{esCamino(distancias,origen,destino,res) \lor res = \TLista{}} 
-    \asegura{\paraTodo[unalinea]{camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) 
-    \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)}}
+    \asegura{res = <> \lor (esCamino(distancias,origen,destino,res) \land \\ 
+    \paraTodo[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) 
+    \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)})}
 
 \end{proc}
 
@@ -91,7 +94,7 @@
 
 \pred{sinRepetidos}{lista: \TLista{Ciudad}}{
     \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{lista} \implicaLuego \paraTodo[unalinea]{j}{\ent}{
-    0 \leq j < \abs{lista} \land Ciudad[i] = Ciudad[j] \implicaLuego j = i}}
+    0 \leq j < \abs{lista} \yLuego lista[i]_0 = lista[j]_0 \implicaLuego j = i}}
 }
 
 \pred{cantidadHabitantesValida}{\In ciudades: \TLista{Ciudad}}{
@@ -104,7 +107,7 @@
 }
 
 \pred{tieneDiagonalNula}{matriz: \TLista{\TLista{}}}{
-    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \land i = j \implicaLuego matriz[i][j] = 0}
+    \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \land i = j \implicaLuego matriz[i][i] = 0}
 }
 
 \pred{mismasCiudades}{\In ciudades: \TLista{Ciudad}, \In otrasCiudades: \TLista{Ciudad}}{
@@ -113,10 +116,9 @@
 }
 
 \pred{esCamino}{distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent, camino: \TLista{\ent}}{
-    desde \in camino \land hasta \in camino \land desde \neq hasta \land \paraTodo[unalinea]{i}{\ent}{
-    0 \leq i < \abs{camino} \implicaLuego 0 \leq camino[i] < \abs{distancias}} \land \\
-    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{camino}-1 \implicaLuego 
-    distancias[camino[i]][camino[i+1]] \neq 0}
+    camino \neq <> \yLuego desde = camino[0] \land hasta = camino[\abs{camino}-1] \land desde \neq hasta \land 
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{camino} \implicaLuego \\ 0 \leq camino[i] < \abs{distancias}} \land
+    \paraTodo[unalinea]{i}{\ent}{0 \leq i < \abs{camino}-1 \implicaLuego distancias[camino[i]][camino[i+1]] \neq 0}
 }
 
 \pred{esMatrizDeConexion}{matriz: \TLista{\TLista{\ent}}}{
