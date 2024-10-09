@@ -106,7 +106,7 @@
     \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \yLuego matriz[i][j] = matriz[j][i]}
 }
 
-\pred{tieneDiagonalNula}{matriz: \TLista{\TLista{}}}{
+\pred{tieneDiagonalNula}{matriz: \TLista{\TLista{\ent}}}{
     \paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < \abs{matriz} \land i = j \implicaLuego matriz[i][i] = 0}
 }
 
