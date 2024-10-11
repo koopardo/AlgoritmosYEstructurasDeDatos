@@ -70,6 +70,7 @@
 \end{proc}
 
 \begin{proc}{cantidadCaminosNSaltos}{\Inout conexion : \TLista{\TLista{\ent}}, \In n: \ent}{}
+    
     \requiere{esMatrizDeConexion(conexion) \land n \geq 1 \land conexion = Conexion_0}
 
 	\asegura{mismasDimensiones(conexion,Conexion_0)}
@@ -81,12 +82,11 @@
 \end{proc}
 
 \begin{proc}{caminoMinimo}{\In origen : \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
+
     \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)
     \land \\ tieneDiagonalNula(distancias)}
 
-    \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
-    \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
-    longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = <>}
+    \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino)} \implicaLuego res = <>}
     \asegura{\existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
     \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
     longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = camino}
