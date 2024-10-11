@@ -84,9 +84,12 @@
     \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)
     \land \\ tieneDiagonalNula(distancias)}
 
-    \asegura{res = <> \lor (esCamino(distancias,origen,destino,res) \land \\ 
-    \paraTodo[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) 
-    \implicaLuego \\ longitudDeCamino(res,distancias) \leq longitudDeCamino(camino,distancias)})}
+    \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
+    \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
+    longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = <>}
+    \asegura{\existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
+    \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
+    longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = camino}
 
 \end{proc}
 
