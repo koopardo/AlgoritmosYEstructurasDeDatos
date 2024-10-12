@@ -21,10 +21,7 @@
 \integrante{Comerci, Lucas}{818/24}{lukicomerci@gmail.com}
 \integrante{Luis, Theo}{130/23}{theoluis44@gmail.com}
 \integrante{Zea, Marcos}{405/09}{zea.marcos@gmail.com}
-% Pongan cuantos integrantes quieran
 
-% Declaramos donde van a estar las figuras
-% No es obligatorio, pero suele ser comodo
 \graphicspath{{../static/}}
 
 \begin{document}
@@ -87,6 +84,7 @@
     \land \\ tieneDiagonalNula(distancias)}
 
     \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino)} \implicaLuego res = <>}
+    
     \asegura{\existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
     \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
     longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = camino}
