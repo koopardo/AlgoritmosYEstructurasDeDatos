@@ -83,11 +83,12 @@
     \requiere{0 \leq origen < \abs{distancias} \land 0 \leq destino < \abs{distancias} \land esSimetrica(distancias)
     \land \\ tieneDiagonalNula(distancias)}
 
-    \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino)} \implicaLuego res = <>}
+    \asegura{\neg \existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino)} 
+    \implica res = <>}
     
     \asegura{\existe[unalinea]{\ camino}{\TLista{\ent}}{esCamino(distancias,origen,destino,camino) \land \\
-    \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implicaLuego \\
-    longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implicaLuego res = camino}
+    \paraTodo[unalinea]{\ otroCamino}{\TLista{\ent}}{esCamino(distancias,origen,destino,otroCamino) \implica \\
+    longitudDeCamino(camino,distancias) \leq longitudDeCamino(otroCamino,distancias)}} \implica res = camino}
 
 \end{proc}
 
@@ -286,14 +287,14 @@ Completamente trivial, se cumple.
 
 \subsection*{El valor devuelto es mayor a 50.000}
 Como en mi especificación el valor de entrada $ciudades = \TLista{Ciudad}$ es un $in$, esto me asegura que la lista 
-\textit{ciudades} no se modifica durante la demostración, con lo cual hace que $P$ sea valido siempre.
+\textit{ciudades} no se modifica durante el programa, con lo cual hace que $P$ sea valido siempre.
  
-Calculo $res$ a partir de la expresión en $Q$. Como mi $P$ es valido, tomo $ciudades = \TLista{Ciudad}$ y tengo que 
+Calculo $res$ a partir de la expresión en $Q$. Tomo $ciudades = \TLista{Ciudad}$ y como mi $P$ es valido, se tiene que 
 existe un $j$, donde $0 \leq j < \abs{ciudades}$, tal que $ciudades[j]_1 > 50000$. Basta ver que 
 \begin{align*}
     res &= \sum_{i=0}^{|ciudades|-1}ciudades[i]_1 = ciudades[j]_1 +\sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1
     > 50000 + \sum_{i=0 \land i \neq j}^{|ciudades|-1}ciudades[i]_1 > 50000 \\
     res &> 50000
 \end{align*}
-con lo cual, el valor devuelto es mayor a 50000.
+Por lo tanto, el valor devuelto es mayor a 50000.
 \end{document}
